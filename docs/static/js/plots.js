@@ -32,11 +32,11 @@ function makeResponsive() {
 
         //Create Scales for Charts
         const xScale = d3.scaleLinear()
-            .domain(d3.extent(healthData, d => d.poverty))
+            .domain([(d3.min(healthData, d => d.healthcare) + 4), (d3.max(healthData, d => d.poverty) + 1)])
             .range([0, width]);
 
         const yScale = d3.scaleLinear()
-            .domain([0, d3.max(healthData, d => d.healthcare)])
+            .domain([0, (d3.max(healthData, d => d.healthcare) + 1)])
             .range([height, 0]);
 
         //Create Axes
