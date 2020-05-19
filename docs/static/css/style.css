@@ -3,3 +3,10 @@
     background-size: cover;
     background-repeat: none;
 }
+
+.jumbotron-text {
+    padding: 20px;
+    background-color: rgba(227, 234, 240, 0.63);
+    border-radius: 15px;
+    box-shadow: 1px 1px rgba(48, 51, 53, 0.116);
+}
