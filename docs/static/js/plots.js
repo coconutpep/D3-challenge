@@ -7,8 +7,8 @@ function makeResponsive() {
     const margin = {
         top: 50,
         bottom: 50,
-        left: 50,
-        right: 50
+        left: 100,
+        right: 100
     };
     //Set chart dimensions
     const width = svgWidth - margin.right - margin.left;
@@ -32,11 +32,11 @@ function makeResponsive() {
 
         //Create Scales for Charts
         const xScale = d3.scaleLinear()
-            .domain([(d3.min(healthData, d => d.healthcare) + 4), (d3.max(healthData, d => d.poverty) + 1)])
-            .range([0, width]);
+            .domain([(d3.min(healthData, d => d.poverty) - .5), d3.max(healthData, d => d.poverty)])
+            .range([margin.left, width]);
 
         const yScale = d3.scaleLinear()
-            .domain([0, (d3.max(healthData, d => d.healthcare) + 1)])
+            .domain([(d3.min(healthData, d => d.healthcare) - 1), (d3.max(healthData, d => d.healthcare) + 1)])
             .range([height, 0]);
 
         //Create Axes
@@ -47,7 +47,17 @@ function makeResponsive() {
             .attr("transform", `translate(0, ${height})`)
             .call(xAxis);
         svg.append("g")
-            .call(yAxis);
+            .call(yAxis)
+            .attr("transform",`translate(${margin.left}, 0)`);
+        //Label Axes
+        svg.append("text")
+            .classed("axis-text", true)
+            .attr("transform", `translate(${width / 2}, ${height + margin.bottom + 5})`)
+            .text("% Poverty");
+        svg.append("text")
+            .classed("axis-text", true)
+            .attr("transform", `translate(${margin.left / 2}, ${(height / 2)}) rotate(-90)`)
+            .text("% Without Healthcare");
         
         //Draw points for the graph
         const circleGroup = svg.selectAll("circle").data(healthData).enter()
@@ -61,9 +71,10 @@ function makeResponsive() {
         //Create Data Labels for data Points
         const dataLabels = svg.selectAll("text").data(healthData).enter()
             .append("text")
-            .attr("x", d => xScale(d.poverty) - 10)
-            .attr("y", d => yScale(d.healthcare) + 5)
-            .attr("width", 20)
+            .attr("x", d => xScale(d.poverty) - 15)
+            .attr("y", d => yScale(d.healthcare))
+            .attr("width", 30)
+            .attr("height", 30)
             .text(d => d.abbr);
     });
 }
