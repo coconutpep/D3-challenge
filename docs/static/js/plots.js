@@ -62,6 +62,8 @@ function makeResponsive() {
         //Draw points for the graph
         const circleGroup = svg.selectAll("circle").data(healthData).enter()
             .append("circle")
+            .transition()
+            .duration(1000)
             .attr("cx", d => xScale(d.poverty))
             .attr("cy", d => yScale(d.healthcare))
             .attr("r", 15)
@@ -71,6 +73,8 @@ function makeResponsive() {
         //Create Data Labels for data Points
         const dataLabels = svg.selectAll("text").data(healthData).enter()
             .append("text")
+            .transition()
+            .duration(1000)
             .attr("x", d => xScale(d.poverty) - 15)
             .attr("y", d => yScale(d.healthcare))
             .attr("width", 30)
