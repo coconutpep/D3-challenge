@@ -97,24 +97,26 @@ function updateToolTips(circlesGroup, chosenX, chosenY) {
     let yLabel;
     
     //Switch statement to change x labels
-    switch(chosenX) {
-        case "poverty":
-            label = "Poverty %:";
-        case "age":
-            label = "Median Age:";
-        case "income":
-            label = "Median Household Income:"
-    };
+    if (chosenX === "poverty") {
+        xLabel = "% Poverty:";
+    }
+    else if (chosenX === "age") {
+        xLabel = "Age (Median)";
+    }
+    else if (chosenX === "income") {
+        xLabel = "Household Income (Median)";
+    }
 
     //Switch statement to change y labels
-    switch(chosenY) {
-        case "healthcare":
-            label = "Lacks Healthcare %:";
-        case "smokes":
-            label = "Smokes %:";
-        case "obesity":
-            label = "Obesity %:"
-    };
+    if (chosenY === "healthcare") {
+        yLabel = "Lacks Healthcare (%)";
+    }
+    else if (chosenY === "smokes") {
+        yLabel = "Smokes (%)";
+    }
+    else if (chosenY === "obesity") {
+        yLabel = "Obesity (%)";
+    }
 
     //Create tooltips
     const toolTip = d3.tip()
@@ -128,7 +130,7 @@ function updateToolTips(circlesGroup, chosenX, chosenY) {
     //Create event handlers to show/hide tooltips
     circlesGroup.on("mouseover", d => toolTip.show(d))
         .on("mouseout", d => toolTip.hide(d));
-    
+
     return circlesGroup;
 }
 
@@ -146,7 +148,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
         d.obesity = +d.obesity;
         d.smokes = +d.smokes;
     });
-
+    console.log(healthData);
     //Scale functions call
     let xLinearScale = xScale(healthData, chosenX);
     let yLinearScale = yScale(healthData, chosenY);
@@ -172,16 +174,20 @@ d3.csv("data/data.csv").then((healthData, err) => {
         .attr("r", 15)
         .attr("stroke", "black")
         .attr("fill", "lightblue")
-        .attr("opacity", .5);
+        .attr("opacity", .75);
 
     //Append labels for circles
-    let labelsGroup = chartGroup.selectAll("text").data(healthData).enter()
+    let labelsGroup = chartGroup.selectAll(".data-label").data(healthData).enter()
         .append("text")
         .attr("x", xScale(healthData, d => d[chosenX]))
         .attr("y", yScale(healthData, d => d[chosenY]))
         .attr("text-anchor", "middle")
+        .attr("alignment-baseline", "middle")
         .attr("stroke", "black")
         .text(d => d.abbr);
+    
+    //Draw initial chart
+    circlesGroup = renderCircles(circlesGroup, labelsGroup, xLinearScale, yLinearScale, chosenX, chosenY);
 
     //Create group for x-axis labels
     const xAxisLabels = chartGroup.append("g")
@@ -317,7 +323,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
                     .classed("active", false)
                     .classed("inactive", true);
             }
-            else if (chosenX ==="smokes") {
+            else if (chosenY === "smokes") {
                 healthcareLabel
                     .classed("active", false)
                     .classed("inactive", true);
