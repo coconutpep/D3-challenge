@@ -74,12 +74,18 @@ function renderY(newYScale, yAxis) {
 }
 
 //function for updating circle group
-function renderCircles(circlesGroup, newXScale, newYScale, chosenX, chosenY) {
+function renderCircles(circlesGroup, labelsGroup, newXScale, newYScale, chosenX, chosenY) {
     //Transition circles
     circlesGroup.transition()
         .duration(1000)
         .attr("cx", d => newXScale(d[chosenX]))
         .attr("cy", d => newYScale(d[chosenY]));
+
+    //Transition labels
+    labelsGroup.transition()
+        .duration(1000)
+        .attr("x", d => newXScale(d[chosenX]))
+        .attr("y", d => newYScale(d[chosenY]));
 
     return circlesGroup;
 }
@@ -140,7 +146,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
         d.obesity = +d.obesity;
         d.smokes = +d.smokes;
     });
-    console.log(healthData);
+
     //Scale functions call
     let xLinearScale = xScale(healthData, chosenX);
     let yLinearScale = yScale(healthData, chosenY);
@@ -173,6 +179,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
         .append("text")
         .attr("x", xScale(healthData, d => d[chosenX]))
         .attr("y", yScale(healthData, d => d[chosenY]))
+        .attr("text-anchor", "middle")
         .attr("stroke", "black")
         .text(d => d.abbr);
 
@@ -207,18 +214,21 @@ d3.csv("data/data.csv").then((healthData, err) => {
         .attr("x", 0 - (height / 2) - 40)
         .attr("y", 0 - margin.left)
         .attr("dy", "1em")
+        .attr("value", "healthcare")
         .classed("active", true)
         .text("Lacks Healthcare (%)");
     const smokesLabel = yAxisLabels.append("text")
         .attr("x", 0 - (height / 2) - 20)
         .attr("y", 0 - margin.left - 20)
         .attr("dy", "1em")
+        .attr("value", "smokes")
         .classed("inactive", true)
         .text("Smokes (%)");
     const obesityLabel = yAxisLabels.append("text")
         .attr("x", 0 - (height / 2) - 20)
         .attr("y", 0 - margin.left - 40)
         .attr("dy", "1em")
+        .attr("value", "obesity")
         .classed("inactive", true)
         .text("Obesity (%)");
 
@@ -239,7 +249,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
                 //Transition x-axis
                 xAxis = renderX(xLinearScale, xAxis);
                 //Update Circles
-                circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenX, chosenY);
+                circlesGroup = renderCircles(circlesGroup, labelsGroup, xLinearScale, yLinearScale, chosenX, chosenY);
                 //Update ToolTips
                 tipGroup = updateToolTips(circlesGroup, chosenX, chosenY);
                 //Conditional statement to change axis formatting
@@ -292,7 +302,7 @@ d3.csv("data/data.csv").then((healthData, err) => {
             //Transition x-axis
             yAxis = renderY(yLinearScale, yAxis);
             //Update Circles
-            circlesGroup = renderCircles(circlesGroup, xLinearScale, yLinearScale, chosenX, chosenY);
+            circlesGroup = renderCircles(circlesGroup, labelsGroup, xLinearScale, yLinearScale, chosenX, chosenY);
             //Update ToolTips
             tipGroup = updateToolTips(circlesGroup, chosenX, chosenY);
             //Conditional statement to change axis formatting
